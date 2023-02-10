@@ -10,7 +10,16 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) =>
         cb(null, `${uuid()}.${mime.extension(file.mimetype)}`),
   });
-const upload = multer({ storage });
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        if(['image/jpeg', 'image/png'].includes(file.mimetype)) cb(null, true);
+        else cb(new Error("invalid file type"), false); //오류, t/f
+    },
+    limits:{
+        fileSize: 1024 * 1024 * 5, //1MB * 5 = 5MB
+    },
+});
 
 const app = express(); //미들웨어를 app에 추가
 const PORT = 5000;
